@@ -3,6 +3,8 @@ package wolox.training.models;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.google.common.base.Preconditions;
+import com.sun.istack.NotNull;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDate;
@@ -10,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,16 +29,16 @@ public class Users {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(nullable = false)
+    @NotNull
     @ApiModelProperty(notes = "username of user")
     private String username;
 
-    @Column(nullable = false)
+    @NotNull
     @ApiModelProperty(notes = "name of user")
     private String name;
 
+    @NotNull
     @ApiModelProperty(notes = "birthdate of user")
-    @Column(nullable = false)
     private LocalDate birthdate;
 
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
@@ -58,6 +59,9 @@ public class Users {
     }
 
     public void setUsername(String username) {
+
+        String message = "the username of user must not be null";
+        Preconditions.checkNotNull(username, message);
         username = username;
     }
 
@@ -66,6 +70,8 @@ public class Users {
     }
 
     public void setName(String name) {
+        String message = "the name of user must not be null";
+        Preconditions.checkNotNull(name, message);
         this.name = name;
     }
 
@@ -74,6 +80,10 @@ public class Users {
     }
 
     public void setBirthdate(LocalDate birthdate) {
+        String messageCheckNotNull = "the birthdate of user must not be null";
+        String messagCheckArgument = "the birthdate is greater than the current";
+        Preconditions.checkNotNull(birthdate, messageCheckNotNull);
+        Preconditions.checkArgument(birthdate.isBefore(LocalDate.now()), messagCheckArgument);
         this.birthdate = birthdate;
     }
 
@@ -87,10 +97,6 @@ public class Users {
 
     public long getId() {
         return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public void addBook(Book book) {

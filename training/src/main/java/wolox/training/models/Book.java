@@ -1,13 +1,15 @@
 package wolox.training.models;
 
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.google.common.base.Preconditions;
+import com.sun.istack.NotNull;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,38 +27,36 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @NotNull
     @ApiModelProperty(notes = "genre of book")
     private String genre;
 
-    @Column(nullable = false)
+    @NotNull
     @ApiModelProperty(notes = "author of book")
     private String author;
 
-    @Column(nullable = false)
+    @NotNull
     @ApiModelProperty(notes = "image of book")
     private String image;
 
-    @Column(nullable = false)
+    @NotNull
     @ApiModelProperty(notes = "title of book")
     private String title;
 
-    @Column(nullable = false)
+    @NotNull
     @ApiModelProperty(notes = "subtitle of book")
     private String subtitle;
 
-    @Column(nullable = false)
     @ApiModelProperty(notes = "publisher of book")
     private String publisher;
 
-    @Column(nullable = false)
     @ApiModelProperty(notes = "year of book")
     private String year;
 
-    @Column(nullable = false)
+    @NotNull
     @ApiModelProperty(notes = "pages of book")
     private Integer pages;
 
-    @Column(nullable = false)
     @ApiModelProperty(notes = "isbn of book")
     private String isbn;
 
@@ -87,15 +87,13 @@ public class Book {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public String getGenre() {
         return genre;
     }
 
     public void setGenre(String genre) {
+        String message = "the genre of book must not be null";
+        Preconditions.checkNotNull(genre, message);
         this.genre = genre;
     }
 
@@ -104,6 +102,8 @@ public class Book {
     }
 
     public void setAuthor(String author) {
+        String message = "the author of book must not be null";
+        Preconditions.checkNotNull(author, message);
         this.author = author;
     }
 
@@ -112,6 +112,8 @@ public class Book {
     }
 
     public void setImage(String image) {
+        String message = "the image of book must not be null";
+        Preconditions.checkNotNull(image, message);
         this.image = image;
     }
 
@@ -120,6 +122,8 @@ public class Book {
     }
 
     public void setTitle(String title) {
+        String message = "the title of book must not be null";
+        Preconditions.checkNotNull(title, message);
         this.title = title;
     }
 
@@ -128,6 +132,8 @@ public class Book {
     }
 
     public void setSubtitle(String subtitle) {
+        String message = "the subtitle of book must not be null";
+        Preconditions.checkNotNull(subtitle, message);
         this.subtitle = subtitle;
     }
 
@@ -152,6 +158,10 @@ public class Book {
     }
 
     public void setPages(Integer pages) {
+        String messagCheckNotNull = "the pages of book must not be null";
+        String messagCheckArgument = "the pages of book must be greater than 0";
+        Preconditions.checkNotNull(pages, messagCheckNotNull);
+        Preconditions.checkArgument(pages > 0, messagCheckArgument);
         this.pages = pages;
     }
 

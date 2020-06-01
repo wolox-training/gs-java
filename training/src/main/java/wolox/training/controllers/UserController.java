@@ -27,7 +27,6 @@ import wolox.training.repositories.UserRepository;
 @RestController
 @RequestMapping("api/books")
 @Api(value = "User Resouce Rest endpoint")
-
 public class UserController {
 
     @Autowired
@@ -68,7 +67,9 @@ public class UserController {
     public void delete(@PathVariable Long id) {
         userRepository.findById(id).orElseThrow(UserNotFoundException::new);
         userRepository.deleteById(id);
+
     }
+
 
     @PostMapping("/user")
     @ResponseStatus(HttpStatus.CREATED)
@@ -107,8 +108,7 @@ public class UserController {
         @ApiResponse(code = 404, message = "Book not found")
     })
     public Users updateBookOfUser(
-        @ApiParam(value = "id of user to create relationship") @PathVariable String
-            id_user,
+        @ApiParam(value = "id of user to create relationship") @PathVariable String id_user,
         @ApiParam(value = "id of book to create relationship")
         @PathVariable String id_book) {
         Users user = userRepository.findById(Long.parseLong(id_user))
