@@ -1,12 +1,21 @@
 package wolox.training.models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 
 @Entity
+@JsonIdentityInfo(
+    generator = ObjectIdGenerators.PropertyGenerator.class,
+    property = "id")
 public class Book {
 
     @Id
@@ -39,7 +48,15 @@ public class Book {
     @Column(nullable = false)
     private String isbn;
 
-    Book(String genre, String author, String image, String title, String subtitle, String publisher,
+
+    @ManyToMany(mappedBy = "books")
+    private List<Users> users = new ArrayList();
+
+    public Book() {
+    }
+
+    public Book(String genre, String author, String image, String title, String subtitle,
+        String publisher,
         String year, Integer pages, String isbn) {
         this.genre = genre;
         this.author = author;
@@ -50,6 +67,7 @@ public class Book {
         this.year = year;
         this.pages = pages;
         this.isbn = isbn;
+
     }
 
     public long getId() {
@@ -130,5 +148,32 @@ public class Book {
 
     public void setIsbn(String isbn) {
         this.isbn = isbn;
+    }
+
+    public List<Users> getUsers() {
+        return (List<Users>) Collections.unmodifiableList(users);
+    }
+
+    public void setUsers(List<Users> users) {
+        this.users = users;
+    }
+
+    public void addUser(Users user) {
+        this.users.add(user);
+    }
+
+    public void deleteAllUser() {
+        this.users.removeAll(this.users);
+    }
+
+    public void update(Book book) {
+        this.setAuthor(book.getAuthor());
+        this.setGenre(book.getGenre());
+        this.setImage(book.getImage());
+        this.setIsbn(book.getIsbn());
+        this.setPages(book.getPages());
+        this.setPublisher(book.getPublisher());
+        this.setSubtitle(book.getSubtitle());
+        this.setTitle(book.getTitle());
     }
 }

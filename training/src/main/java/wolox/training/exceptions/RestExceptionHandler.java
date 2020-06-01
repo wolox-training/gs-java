@@ -18,6 +18,21 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
+
+    @ExceptionHandler({UserNotFoundException.class})
+    protected ResponseEntity<Object> handleUserNotFound(
+        RuntimeException ex, WebRequest request) {
+        return handleExceptionInternal(ex, "User not found",
+            new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+
+    @ExceptionHandler({BookAlreadyOwnedException.class})
+    protected ResponseEntity<Object> handleBookAlreadyOwnedException(
+        RuntimeException ex, WebRequest request) {
+        return handleExceptionInternal(ex, "the book already belongs to the owner",
+            new HttpHeaders(), HttpStatus.NOT_ACCEPTABLE, request);
+    }
+
     @ExceptionHandler({BookIdMismatchException.class,
     })
     public ResponseEntity<Object> handleBadRequest(
