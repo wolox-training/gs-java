@@ -1,7 +1,10 @@
 package wolox.training.models;
 
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,6 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
 @Entity
+@ApiModel(description = "Users from the OpenLibraryApi")
 @JsonIdentityInfo(
     generator = ObjectIdGenerators.PropertyGenerator.class,
     property = "id")
@@ -25,11 +29,14 @@ public class Users {
     private long id;
 
     @Column(nullable = false)
+    @ApiModelProperty(notes = "username of user")
     private String username;
 
     @Column(nullable = false)
+    @ApiModelProperty(notes = "name of user")
     private String name;
 
+    @ApiModelProperty(notes = "birthdate of user")
     @Column(nullable = false)
     private LocalDate birthdate;
 

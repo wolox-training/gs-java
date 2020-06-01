@@ -2,6 +2,8 @@ package wolox.training.models;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
 @Entity
+@ApiModel(description = "Books from the OpenLibraryApi")
 @JsonIdentityInfo(
     generator = ObjectIdGenerators.PropertyGenerator.class,
     property = "id")
@@ -22,34 +25,44 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @ApiModelProperty(notes = "genre of book")
     private String genre;
 
     @Column(nullable = false)
+    @ApiModelProperty(notes = "author of book")
     private String author;
 
     @Column(nullable = false)
+    @ApiModelProperty(notes = "image of book")
     private String image;
 
     @Column(nullable = false)
+    @ApiModelProperty(notes = "title of book")
     private String title;
 
     @Column(nullable = false)
+    @ApiModelProperty(notes = "subtitle of book")
     private String subtitle;
 
     @Column(nullable = false)
+    @ApiModelProperty(notes = "publisher of book")
     private String publisher;
 
     @Column(nullable = false)
+    @ApiModelProperty(notes = "year of book")
     private String year;
 
     @Column(nullable = false)
+    @ApiModelProperty(notes = "pages of book")
     private Integer pages;
 
     @Column(nullable = false)
+    @ApiModelProperty(notes = "isbn of book")
     private String isbn;
 
 
     @ManyToMany(mappedBy = "books")
+    @ApiModelProperty(notes = "users who have the book")
     private List<Users> users = new ArrayList();
 
     public Book() {

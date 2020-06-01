@@ -1,5 +1,6 @@
 package wolox.training.controllers;
 
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,6 +19,7 @@ import wolox.training.repositories.BookRepository;
 
 @RestController
 @RequestMapping("api/books")
+@Api(value = "Book Resouce Rest endpoint")
 public class BookController {
 
     @Autowired
