@@ -198,5 +198,7 @@ public class Book {
         this.setPublisher(book.getPublisher());
         this.setSubtitle(book.getSubtitle());
         this.setTitle(book.getTitle());
+        this.setYear(book.getYear());
+
     }
 }

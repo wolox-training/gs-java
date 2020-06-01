@@ -30,7 +30,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleBookAlreadyOwnedException(
         RuntimeException ex, WebRequest request) {
         return handleExceptionInternal(ex, "the book already belongs to the owner",
-            new HttpHeaders(), HttpStatus.NOT_ACCEPTABLE, request);
+            new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+
+    @ExceptionHandler({BookNotOwnedException.class})
+    protected ResponseEntity<Object> handleBookNotOwnedException(
+        RuntimeException ex, WebRequest request) {
+        return handleExceptionInternal(ex, "the book not belongs to the owner",
+            new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
     @ExceptionHandler({BookIdMismatchException.class,

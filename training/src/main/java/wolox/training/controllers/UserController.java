@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import wolox.training.exceptions.BookAlreadyOwnedException;
 import wolox.training.exceptions.BookNotFoundException;
+import wolox.training.exceptions.BookNotOwnedException;
 import wolox.training.exceptions.UserNotFoundException;
 import wolox.training.models.Book;
 import wolox.training.models.Users;
@@ -70,8 +71,7 @@ public class UserController {
 
     }
 
-
-    @PostMapping("/user")
+    @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Create a user", response = Users.class)
     @ApiResponses(value = {
@@ -100,10 +100,33 @@ public class UserController {
         return userRepository.save(users);
     }
 
+    @DeleteMapping("/users/{id_user}/book/{id_book}")
+    @ApiOperation(value = "Giving an id of user and id ok book and delete relationship")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "delete create relationship"),
+        @ApiResponse(code = 404, message = "User not found"),
+        @ApiResponse(code = 404, message = "Book not found")
+    })
+    public Users deleteBookOfUser(
+        @ApiParam(value = "id of user to delete relationship") @PathVariable String id_user,
+        @ApiParam(value = "id of book to delete relationship")
+        @PathVariable String id_book) {
+        Users user = userRepository.findById(Long.parseLong(id_user))
+            .orElseThrow(UserNotFoundException::new);
+        Book bookToAssing = bookRepository.findById(Long.parseLong(id_book))
+            .orElseThrow(BookNotFoundException::new);
+        if (user.checkUserHasABook(bookToAssing)) {
+            user.removeBook(bookToAssing);
+            return userRepository.save(user);
+        } else {
+            throw new BookNotOwnedException();
+        }
+    }
+
     @PutMapping("/users/{id_user}/book/{id_book}")
     @ApiOperation(value = "Giving an id of user and id ok book and create relationship", response = Users.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "Succesfully create relationship"),
+        @ApiResponse(code = 200, message = "Succesfully create relationship"),
         @ApiResponse(code = 404, message = "User not found"),
         @ApiResponse(code = 404, message = "Book not found")
     })

@@ -59,10 +59,9 @@ public class Users {
     }
 
     public void setUsername(String username) {
-
         String message = "the username of user must not be null";
         Preconditions.checkNotNull(username, message);
-        username = username;
+        this.username = username;
     }
 
     public String getName() {
@@ -107,4 +106,9 @@ public class Users {
         return this.books.stream()
             .anyMatch(book -> book.getId() == bookToCheck.getId());
     }
+
+    public void removeBook(Book book) {
+        this.books.removeIf(bk -> bk.getId() == book.getId());
+    }
+
 }
