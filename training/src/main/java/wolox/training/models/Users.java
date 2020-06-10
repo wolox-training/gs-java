@@ -28,19 +28,15 @@ public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-
     @NotNull
     @ApiModelProperty(notes = "username of user")
     private String username;
-
     @NotNull
     @ApiModelProperty(notes = "name of user")
     private String name;
-
     @NotNull
     @ApiModelProperty(notes = "birthdate of user")
     private LocalDate birthdate;
-
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     private List<Book> books = new ArrayList();
 
@@ -52,7 +48,6 @@ public class Users {
         this.name = name;
         this.birthdate = birthdate;
     }
-
 
     public String getUsername() {
         return username;
@@ -96,6 +91,11 @@ public class Users {
 
     public long getId() {
         return id;
+    }
+
+    // this method is used in tests
+    public void setId(long id) {
+        this.id = id;
     }
 
     public void addBook(Book book) {

@@ -44,7 +44,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     })
     public ResponseEntity<Object> handleBadRequest(
         Exception ex, WebRequest request) {
-        return handleExceptionInternal(ex, ex.getLocalizedMessage(),
+        return handleExceptionInternal(ex, "the id of book is different of parameter",
             new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
