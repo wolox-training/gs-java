@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.security.Principal;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -164,11 +167,25 @@ public class UserController {
         }
     }
 
-    @GetMapping("/user")
+    @GetMapping("/findUser")
+    @ApiOperation(value = "Get the currently logged in user", response = Users.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Succesfully found users by birthdate and name"),
+        @ApiResponse(code = 404, message = "User not found")
+    })
+    public ArrayList<Users> findByBirthdateAndName(@RequestParam String birthdateFrom,
+        @RequestParam String birthdateTo,
+        @RequestParam String name) {
+        return userRepository
+            .findByBirthdateBetweenAndNameContainingIgnoreCase(LocalDate.parse(birthdateFrom),
+                LocalDate.parse(birthdateTo), name).orElseThrow(UserNotFoundException::new);
+    }
+
+    @GetMapping("/username")
     @ResponseBody
     @ApiOperation(value = "Get the currently logged in user", response = Users.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Succesfully found user")
+        @ApiResponse(code = 200, message = "Succesfully found username")
     })
     public String currentUserName(Principal principal) {
         return principal.getName();

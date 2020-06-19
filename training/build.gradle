@@ -32,12 +32,9 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-security")
     compile 'org.json:json:20171018'
     testCompile group: 'org.springframework.security', name: 'spring-security-test', version: '5.1.6.RELEASE'
-    compile 'com.googlecode.json-simple:json-simple:1.1.1'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-
-
 }
 
 test {
