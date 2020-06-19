@@ -22,7 +22,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({UserNotFoundException.class})
     protected ResponseEntity<Object> handleUserNotFound(
         RuntimeException ex, WebRequest request) {
-        return handleExceptionInternal(ex, "User not found",
+        return handleExceptionInternal(ex, "message: User not found",
             new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
