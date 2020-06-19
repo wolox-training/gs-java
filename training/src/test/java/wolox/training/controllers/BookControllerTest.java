@@ -7,17 +7,22 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import wolox.training.models.Book;
 import wolox.training.repositories.BookRepository;
 import wolox.training.utils.BuildBook;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -28,11 +33,14 @@ import static wolox.training.utils.Utils.BODY_WITH_BOOK_CREATED;
 import static wolox.training.utils.Utils.BODY_WITH_BOOK_UPDATED;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(BookController.class)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class BookControllerTest {
 
     @Autowired
+    private WebApplicationContext context;
+
     private MockMvc mvc;
+
     @MockBean
     private BookRepository mockBookRepository;
     private Book oneTestBook;
@@ -41,6 +49,11 @@ public class BookControllerTest {
 
     @BeforeEach
     public void setUp() {
+
+        mvc = MockMvcBuilders
+            .webAppContextSetup(context)
+            .apply(springSecurity())
+            .build();
 
         oneTestBook = new BuildBook()
             .makeABook(1L, "ficcion", "J.K rowling", "one image", "Harry potter",
@@ -55,6 +68,8 @@ public class BookControllerTest {
 
     }
 
+
+    @WithMockUser(value = "pedro")
     @Test
     void whenFindByIdWhichExists_thenBookIsReturned() throws Exception {
         Mockito.when(mockBookRepository.findById(Mockito.anyLong()))
@@ -68,6 +83,7 @@ public class BookControllerTest {
             .andExpect(jsonPath("$.genre", is(oneTestBook.getGenre())));
     }
 
+    @WithMockUser(value = "pedro")
     @Test
     void whenFindByIdWithOutId_thenThrowException() throws Exception {
         Mockito.when(mockBookRepository.findById(Mockito.anyLong()))
@@ -80,6 +96,7 @@ public class BookControllerTest {
     }
 
 
+    @WithMockUser(value = "pedro")
     @Test
     void whenCreateBookWithId_thenBookIsReturn() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
@@ -98,6 +115,7 @@ public class BookControllerTest {
             .andExpect(jsonPath("$.genre", is(oneTestBook.getGenre())));
     }
 
+    @WithMockUser(value = "pedro")
     @org.junit.Test(expected = NullPointerException.class)
     void whenCreateBookWithoutGenre_throwNullPointerException() throws Exception {
         oneTestBookWithOutGenre.setGenre(null);
@@ -105,6 +123,7 @@ public class BookControllerTest {
             .thenReturn(oneTestBookWithOutGenre);
     }
 
+    @WithMockUser(value = "pedro")
     @Test
     void whenUpdateBook_thenReturnMismatchException() throws Exception {
         String url = ("/api/books/2");
@@ -116,7 +135,18 @@ public class BookControllerTest {
                 content().string(containsString("the id of book is different of parameter")));
     }
 
+    @Test
+    void whenUpdateBookWithOutAutenticate_thenReturnAccessDenied() throws Exception {
+        String url = ("/api/books/2");
+        mvc.perform(
+            put(url).contentType(MediaType.APPLICATION_JSON)
+                .content(BODY_WITH_BOOK_UPDATED))
+            .andExpect(status().isForbidden())
+            .andExpect(jsonPath("$.message", is("Access denied")));
+    }
 
+
+    @WithMockUser(value = "pedro")
     @Test
     void whenUpdateBook_thenBookIsReturnWithaNewsProperties() throws Exception {
         Mockito.when(mockBookRepository.findById(1L))

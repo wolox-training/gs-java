@@ -2,6 +2,8 @@ package wolox.training.models;
 
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.google.common.base.Preconditions;
 import com.sun.istack.NotNull;
@@ -28,25 +30,43 @@ public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+
     @NotNull
     @ApiModelProperty(notes = "username of user")
     private String username;
+
     @NotNull
     @ApiModelProperty(notes = "name of user")
     private String name;
+
     @NotNull
     @ApiModelProperty(notes = "birthdate of user")
     private LocalDate birthdate;
+
+    @NotNull
+    @ApiModelProperty(notes = "password of user")
+    @JsonProperty(access = Access.WRITE_ONLY)
+    private String password;
+
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     private List<Book> books = new ArrayList();
 
     public Users() {
     }
 
-    public Users(String username, String name, LocalDate birthdate) {
+    public Users(String username, String name, LocalDate birthdate, String password) {
         this.username = username;
         this.name = name;
         this.birthdate = birthdate;
+        this.password = password;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getUsername() {

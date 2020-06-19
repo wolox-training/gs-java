@@ -48,4 +48,21 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
+    @ExceptionHandler({NotMatchPasswordException.class,
+    })
+    public ResponseEntity<Object> handleNotMatchPasswordException(
+        Exception ex, WebRequest request) {
+        return handleExceptionInternal(ex, "old password is incorrect",
+            new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler({NotMatchConfirmationPasswordException.class,
+    })
+    public ResponseEntity<Object> handleNotMatchConfirmationPasswordException(
+        Exception ex, WebRequest request) {
+        return handleExceptionInternal(ex, "not match new password with confirmation password",
+            new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+
 }

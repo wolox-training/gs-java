@@ -29,6 +29,10 @@ dependencies {
     compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
     compile 'org.springframework.plugin:spring-plugin-core:1.2.0.RELEASE'
     compile group: 'com.google.guava', name: 'guava', version: '27.0-jre'
+    compile("org.springframework.boot:spring-boot-starter-security")
+    compile 'org.json:json:20171018'
+    testCompile group: 'org.springframework.security', name: 'spring-security-test', version: '5.1.6.RELEASE'
+
 }
 
 test {

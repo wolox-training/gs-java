@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,8 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 import wolox.training.exceptions.BookAlreadyOwnedException;
 import wolox.training.exceptions.BookNotFoundException;
 import wolox.training.exceptions.BookNotOwnedException;
+import wolox.training.exceptions.NotMatchConfirmationPasswordException;
+import wolox.training.exceptions.NotMatchPasswordException;
 import wolox.training.exceptions.UserNotFoundException;
 import wolox.training.models.Book;
+import wolox.training.models.PasswordUpdate;
 import wolox.training.models.Users;
 import wolox.training.repositories.BookRepository;
 import wolox.training.repositories.UserRepository;
@@ -31,11 +35,12 @@ import wolox.training.repositories.UserRepository;
 public class UserController {
 
     @Autowired
-    private UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
+    private UserRepository userRepository;
+    @Autowired
     private BookRepository bookRepository;
-
 
     @GetMapping("/users")
     @ApiOperation(value = "find all users", response = Users.class, responseContainer = "List")
@@ -79,9 +84,43 @@ public class UserController {
     })
     public Users create(
         @ApiParam(value = "user DTO in body to create it") @RequestBody Users user) {
-        return userRepository.save(user);
+
+        Users newUser = new Users();
+
+        newUser.setName(user.getName());
+        newUser.setUsername(user.getUsername());
+        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        newUser.setBirthdate(user.getBirthdate());
+
+        return userRepository.save(newUser);
 
     }
+
+    @PutMapping("/users/resetpassword/{id}")
+    @ApiOperation(value = "Giving an id, update password of user", response = Users.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 201, message = "Succesfully update password user"),
+        @ApiResponse(code = 404, message = "User not found")
+    })
+    public Users updatePasswordUser(
+        @ApiParam(value = "user id to found it") @PathVariable Long id,
+        @ApiParam(value = "password to update for the user") @RequestBody PasswordUpdate passwordToUpdate
+    ) {
+        Users user = userRepository.findById(id)
+            .orElseThrow(UserNotFoundException::new);
+        if (passwordEncoder.matches(passwordToUpdate.getOldPassword(), user.getPassword())) {
+            if (passwordToUpdate.getConfirmNewPassword()
+                .equals(passwordToUpdate.getNewPassword())) {
+                user.setPassword(passwordEncoder.encode(passwordToUpdate.getNewPassword()));
+                return userRepository.save(user);
+            } else {
+                throw new NotMatchConfirmationPasswordException();
+            }
+        } else {
+            throw new NotMatchPasswordException();
+        }
+    }
+
 
     @PutMapping("/users/{id}")
     @ApiOperation(value = "Giving an id, update a user", response = Users.class)
