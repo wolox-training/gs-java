@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.security.Principal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import wolox.training.exceptions.BookAlreadyOwnedException;
@@ -160,6 +162,16 @@ public class UserController {
         } else {
             throw new BookNotOwnedException();
         }
+    }
+
+    @GetMapping("/user")
+    @ResponseBody
+    @ApiOperation(value = "Get the currently logged in user", response = Users.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Succesfully found user")
+    })
+    public String currentUserName(Principal principal) {
+        return principal.getName();
     }
 
     @PutMapping("/users/{id_user}/book/{id_book}")

@@ -16,6 +16,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import wolox.training.models.DTO.BookDTO;
+import wolox.training.models.DTO.LibraryServiceDTO;
+
 
 @Entity
 @ApiModel(description = "Books from the OpenLibraryApi")
@@ -208,5 +210,17 @@ public class Book {
         this.setTitle(book.getTitle());
         this.setYear(book.getYear());
 
+    }
+
+    public void putDtoLibraryService(LibraryServiceDTO dtoLibraryService) {
+        this.setAuthor(dtoLibraryService.getAuthors());
+        this.setGenre(dtoLibraryService.getGenre());
+        this.setImage(dtoLibraryService.getImage());
+        this.setIsbn(dtoLibraryService.getIsbn());
+        this.setPages(dtoLibraryService.getPages());
+        this.setPublisher(dtoLibraryService.getPublisher());
+        this.setSubtitle(dtoLibraryService.getSubtitle());
+        this.setTitle(dtoLibraryService.getTitle());
+        this.setYear(dtoLibraryService.getYear());
     }
 }

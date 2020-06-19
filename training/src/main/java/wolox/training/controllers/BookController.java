@@ -35,14 +35,14 @@ public class BookController {
     }
 
     @GetMapping("/isbn/{isbn}")
-    public Book bookInfoByIsbn(@PathVariable String isbn)
-        throws BookNotFoundException {
+    public Book bookInfoByIsbn(@PathVariable String isbn) throws BookNotFoundException {
         return bookRepository.findFirstByIsbn(isbn)
             .orElseGet(() -> {
                 Book bookService = openLibraryService.bookInfo(("ISBN:").concat(isbn))
                     .orElseThrow(BookNotFoundException::new);
                 return bookRepository.save(bookService);
             });
+
     }
 
     @GetMapping("/title/{author}")
