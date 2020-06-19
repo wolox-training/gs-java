@@ -44,8 +44,10 @@ public class Book {
     @NotNull
     @ApiModelProperty(notes = "subtitle of book")
     private String subtitle;
+
     @ApiModelProperty(notes = "publisher of book")
     private String publisher;
+
     @ApiModelProperty(notes = "year of book")
     private String year;
     @NotNull

@@ -145,7 +145,6 @@ public class BookControllerTest {
             .andExpect(jsonPath("$.message", is("Access denied")));
     }
 
-
     @WithMockUser(value = "pedro")
     @Test
     void whenUpdateBook_thenBookIsReturnWithaNewsProperties() throws Exception {

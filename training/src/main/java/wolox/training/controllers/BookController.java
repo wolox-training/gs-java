@@ -59,8 +59,11 @@ public class BookController {
     }
 
     @GetMapping("/findBook")
-    public ArrayList<Book> findByPublisherAndGenreAndYear(@RequestParam String publisher,
-        @RequestParam String genre, @RequestParam String year) throws BookNotFoundException {
+    public ArrayList<Book> findByPublisherAndGenreAndYear(
+        @RequestParam(value = "publisher", required = false) String publisher,
+        @RequestParam(value = "genre", required = false) String genre,
+        @RequestParam(value = "year", required = false) String year)
+        throws BookNotFoundException {
         return bookRepository
             .findByPublisherAndGenreAndYear(publisher, genre, year)
             .orElseThrow(BookNotFoundException::new);

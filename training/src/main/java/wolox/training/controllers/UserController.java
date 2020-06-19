@@ -173,7 +173,9 @@ public class UserController {
         @ApiResponse(code = 200, message = "Succesfully found users by birthdate and name"),
         @ApiResponse(code = 404, message = "User not found")
     })
-    public ArrayList<Users> findByBirthdateAndName(@RequestParam String birthdateFrom,
+
+    public ArrayList<Users> findByBirthdateAndName(
+        @RequestParam String birthdateFrom,
         @RequestParam String birthdateTo,
         @RequestParam String name) {
         return userRepository
