@@ -23,6 +23,7 @@ import wolox.training.utils.BuildBook;
 import wolox.training.utils.BuildUser;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -33,6 +34,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static wolox.training.utils.Utils.BODY_CHANGE_PASSWORD;
+import static wolox.training.utils.Utils.BODY_CHANGE_PASSWORD_WITH_BAD_OLD_PASSWORD;
+import static wolox.training.utils.Utils.BODY_CHANGE_PASSWORD_WITH_DIFFERENTS_PASSWORD;
 import static wolox.training.utils.Utils.BODY_WITH_USER;
 
 
@@ -72,8 +76,20 @@ public class UsersControllerTest {
 
         // user with Id
         oneTestUser = new BuildUser()
-            .makeAUser(1L, "pedro1234", "pedro", LocalDate.parse("1993-12-06"), "hola1234",
+            .makeAUser(1L, "pedro1234", "pedro", LocalDate.parse("1993-12-06"),
+                "$2a$10$aRyOupdGrR7it3hwWEoZPODrDYXW69Um8masNOGyd8HAng4Wg5X3e",
                 oneTestBook);
+
+    }
+
+    @WithMockUser(value = "pedro")
+    @Test
+    void whenGetTheCurrentUser_thenPedroIsReturned() throws Exception {
+        String url = ("/api/books/username");
+        mvc.perform(get(url)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string(equalTo("pedro")));
     }
 
     @WithMockUser(value = "pedro")
@@ -142,6 +158,48 @@ public class UsersControllerTest {
             .andExpect(jsonPath("$.username", is(oneTestUser.getUsername())))
             .andExpect(jsonPath("$.name", is(oneTestUser.getName())))
             .andExpect(jsonPath("$.birthdate", is(oneTestUser.getBirthdate().toString())));
+    }
+
+    @WithMockUser
+    @Test
+    void whenUpdatePasswordUser_thenReturnOk() throws Exception {
+        Mockito.when(mockUserRepository.findById(Mockito.anyLong()))
+            .thenReturn(java.util.Optional.ofNullable(oneTestUser));
+        String url = ("/api/books/users/resetpassword/1");
+        mvc.perform(put(url)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(BODY_CHANGE_PASSWORD))
+            .andExpect(status().isOk());
+    }
+
+    @WithMockUser
+    @Test
+    void whenUpdatePasswordUserWithDifferentNewPassword_thenThrowsNotMatchConfirmationPasswordException()
+        throws Exception {
+        Mockito.when(mockUserRepository.findById(Mockito.anyLong()))
+            .thenReturn(java.util.Optional.ofNullable(oneTestUser));
+        String url = ("/api/books/users/resetpassword/1");
+        mvc.perform(put(url)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(BODY_CHANGE_PASSWORD_WITH_DIFFERENTS_PASSWORD))
+            .andExpect(status().isBadRequest())
+            .andExpect(content()
+                .string(containsString("not match new password with confirmation password")));
+    }
+
+    @WithMockUser
+    @Test
+    void whenUpdatePasswordUserAndNotMatchPasswordsthenThrowsNotMatchException()
+        throws Exception {
+        Mockito.when(mockUserRepository.findById(Mockito.anyLong()))
+            .thenReturn(java.util.Optional.ofNullable(oneTestUser));
+        String url = ("/api/books/users/resetpassword/1");
+        mvc.perform(put(url)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(BODY_CHANGE_PASSWORD_WITH_BAD_OLD_PASSWORD))
+            .andExpect(status().isBadRequest())
+            .andExpect(content()
+                .string(containsString("old password is incorrect")));
     }
 
     @WithMockUser(value = "pedro")

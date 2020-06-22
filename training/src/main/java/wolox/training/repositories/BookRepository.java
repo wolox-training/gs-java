@@ -19,6 +19,29 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     Book findFirstByAuthor(String author);
 
+    @Query(value = "SELECT b FROM Book b WHERE "
+        + "(:genre IS NULL OR genre = :genre) and  "
+        + "(:author IS NULL OR author = :author) and "
+        + "(:image IS NULL OR image = :image) and"
+        + "(:title IS NULL OR title = :title) and"
+        + "(:subtitle IS NULL OR subtitle = :subtitle) and"
+        + "(:publisher IS NULL OR publisher = :publisher) and"
+        + "(:year IS NULL OR year = :year) and"
+        + "(:pages IS NULL OR pages = :pages) and"
+        + "(:isbn IS NULL OR isbn = :isbn)")
+    Optional<ArrayList<Book>> getAllByConditions(
+        @Param("genre") String genre,
+        @Param("author") String author,
+        @Param("image") String image,
+        @Param("title") String title,
+        @Param("subtitle") String subtitle,
+        @Param("publisher") String publisher,
+        @Param("year") String year,
+        @Param("pages") Integer pages,
+        @Param("isbn") String isbn
+    );
+
     Optional<Book> findFirstByIsbn(String isbn);
+
 
 }

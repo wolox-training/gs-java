@@ -2,6 +2,7 @@ package wolox.training.controllers;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -36,16 +37,16 @@ import static wolox.training.utils.Utils.BODY_WITH_BOOK_UPDATED;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class BookControllerTest {
 
+    ArrayList<Book> oneArrayTest;
     @Autowired
     private WebApplicationContext context;
-
     private MockMvc mvc;
-
     @MockBean
     private BookRepository mockBookRepository;
     private Book oneTestBook;
     private Book oneTestBookUpdated;
     private Book oneTestBookWithOutGenre;
+    private Book oneTestBookWithIsbn;
 
     @BeforeEach
     public void setUp() {
@@ -66,6 +67,14 @@ public class BookControllerTest {
         oneTestBookWithOutGenre = new BuildBook().makeABook(2L, null, "J.K rowling", "one Image",
             "Harry potter", "la camara secreta", "publishwer 12345", "1900", 30, "isbn12");
 
+        oneArrayTest = new ArrayList<Book>();
+        oneArrayTest.add(oneTestBook);
+
+        oneTestBookWithIsbn = new BuildBook()
+            .makeABook(1L, "Caricatures and cartoons-Zen Buddhism", "Zhizhong Cai",
+                "https://covers.openlibrary.org/b/id/240726-S.jpg",
+                "Zen speaks",
+                "shouts of nothingness", "Anchor Books", "1994", 159, "0385472579");
     }
 
 
@@ -162,6 +171,78 @@ public class BookControllerTest {
             .andExpect(jsonPath("$.title", is(oneTestBookUpdated.getTitle())))
             .andExpect(jsonPath("$.subtitle", is(oneTestBookUpdated.getSubtitle())))
             .andExpect(jsonPath("$.author", is(oneTestBookUpdated.getAuthor())));
+
+    }
+
+
+    @WithMockUser(value = "pedro")
+    @Test
+    void whenFindByPublisherAndGenreAndYearWithoutParams_thenReturnABook() throws Exception {
+        Mockito.when(mockBookRepository
+            .findByPublisherAndGenreAndYear(
+                null,
+                null,
+                null))
+            .thenReturn(java.util.Optional.ofNullable(oneArrayTest));
+        String url = ("/api/books/findBook");
+        mvc.perform(get(url)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].id", is(1)))
+            .andExpect(jsonPath("$[0].title", is(oneTestBook.getTitle())));
+    }
+
+
+    @WithMockUser(value = "pedro")
+    @Test
+    void whenFindByPublisherAndGenreAndYearAndPassParams_thenReturnABook() throws Exception {
+        Mockito.when(mockBookRepository
+            .findByPublisherAndGenreAndYear(
+                Mockito.anyString(),
+                Mockito.anyString(),
+                Mockito.anyString()))
+            .thenReturn(java.util.Optional.ofNullable(oneArrayTest));
+
+        String url = ("/api/books/findBook");
+
+        mvc.perform(get(url)
+            .contentType(MediaType.APPLICATION_JSON)
+            .param("publisher", oneTestBook.getPublisher())
+            .param("genre", oneTestBook.getGenre())
+            .param("year", oneTestBook.getYear())
+        )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].id", is(1)))
+            .andExpect(jsonPath("$[0].title", is(oneTestBook.getTitle())));
+    }
+
+    @WithMockUser(value = "pedro")
+    @Test
+    void whenFindFirstByIsbnInService_thenThrowsException() throws Exception {
+        Mockito.when(mockBookRepository.findFirstByIsbn("0385472"))
+            .thenReturn(java.util.Optional.ofNullable(null));
+
+        String url = ("/api/books/isbn/0385472");
+        mvc.perform(get(url)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound())
+            .andExpect(content().string(containsString("Book not found")));
+    }
+
+    @WithMockUser(value = "pedro")
+    @Test
+    void whenFindFirstByIsbnInService_thenReturnABook() throws Exception {
+        Mockito.when(mockBookRepository.findFirstByIsbn("0385472579"))
+            .thenReturn(java.util.Optional.ofNullable(null));
+
+        Mockito.when(mockBookRepository.save(Mockito.any()))
+            .thenReturn(oneTestBookWithIsbn);
+
+        String url = ("/api/books/isbn/0385472579");
+        mvc.perform(get(url)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.isbn", is(oneTestBookWithIsbn.getIsbn())));
 
     }
 

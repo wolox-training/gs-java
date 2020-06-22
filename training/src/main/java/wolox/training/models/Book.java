@@ -29,18 +29,23 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+
     @NotNull
     @ApiModelProperty(notes = "genre of book")
     private String genre;
+
     @NotNull
     @ApiModelProperty(notes = "author of book")
     private String author;
+
     @NotNull
     @ApiModelProperty(notes = "image of book")
     private String image;
+
     @NotNull
     @ApiModelProperty(notes = "title of book")
     private String title;
+
     @NotNull
     @ApiModelProperty(notes = "subtitle of book")
     private String subtitle;
@@ -50,11 +55,14 @@ public class Book {
 
     @ApiModelProperty(notes = "year of book")
     private String year;
+
     @NotNull
     @ApiModelProperty(notes = "pages of book")
     private Integer pages;
+
     @ApiModelProperty(notes = "isbn of book")
     private String isbn;
+
     @ManyToMany(mappedBy = "books")
     @ApiModelProperty(notes = "users who have the book")
     private List<Users> users = new ArrayList();

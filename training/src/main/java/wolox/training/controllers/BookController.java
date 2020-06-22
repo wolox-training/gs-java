@@ -32,8 +32,20 @@ public class BookController {
     private OpenLibraryService openLibraryService;
 
     @GetMapping
-    public Iterable findAll() {
-        return bookRepository.findAll();
+    public ArrayList<Book> getAll(
+        @RequestParam(value = "genre", required = false) String genre,
+        @RequestParam(value = "author", required = false) String author,
+        @RequestParam(value = "image", required = false) String image,
+        @RequestParam(value = "title", required = false) String title,
+        @RequestParam(value = "subtitle", required = false) String subtitle,
+        @RequestParam(value = "publisher", required = false) String publisher,
+        @RequestParam(value = "year", required = false) String year,
+        @RequestParam(value = "pages", required = false) Integer pages,
+        @RequestParam(value = "isbn", required = false) String isbn
+    ) throws BookNotFoundException {
+        return bookRepository
+            .getAllByConditions(genre, author, image, title, subtitle, publisher, year, pages, isbn)
+            .orElseThrow(BookNotFoundException::new);
     }
 
     @GetMapping("/isbn/{isbn}")

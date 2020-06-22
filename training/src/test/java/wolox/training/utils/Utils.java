@@ -27,4 +27,43 @@ public class Utils {
             + ", \"isbn\": \"isgn 12\""
             + ", \"image\": \"one image\""
             + "}";
+
+    public static final String BODY_CHANGE_PASSWORD =
+        "{\"oldPassword\": \"hola1234\""
+            + ", \"newPassword\": \"hola5555\""
+            + ", \"confirmNewPassword\": \"hola5555\""
+            + "}";
+
+    public static final String BODY_CHANGE_PASSWORD_WITH_DIFFERENTS_PASSWORD =
+        "{\"oldPassword\": \"hola1234\""
+            + ", \"newPassword\": \"hola5555\""
+            + ", \"confirmNewPassword\": \"hola4444\""
+            + "}";
+
+    public static final String BODY_CHANGE_PASSWORD_WITH_BAD_OLD_PASSWORD =
+        "{\"oldPassword\": \"hola5678\""
+            + ", \"newPassword\": \"hola5555\""
+            + ", \"confirmNewPassword\": \"hola4444\""
+            + "}";
+
+    public static final String RESPONSE_OF_LIBRARY_SERVICE =
+        "{\"ISBN:0385472579\": {\"publishers\": [{\"name\": \"Anchor Books\"}], "
+            + "\"pagination\": \"159 p. :\", "
+            + "\"identifiers\": {\"lccn\": [\"93005405\"],"
+            + " \"openlibrary\": [\"OL1397864M\"], "
+            + "\"isbn_10\": [\"0385472579\"], "
+            + "\"librarything\": [\"192819\"], \"goodreads\": [\"979250\"]},"
+            + " \"subtitle\": \"shouts of nothingness\", \"title\": \"Zen speaks\","
+            + " \"url\": \"https://openlibrary.org/books/OL1397864M/Zen_speaks\", \"number_of_pages\": 159,"
+            + " \"cover\": {\"small\": \"https://covers.openlibrary.org/b/id/240726-S.jpg\","
+            + " \"large\": \"https://covers.openlibrary.org/b/id/240726-L.jpg\","
+            + " \"medium\": \"https://covers.openlibrary.org/b/id/240726-M.jpg\"}, "
+            + "\"subjects\": [{\"url\": \"https://openlibrary.org/subjects/caricatures_and_cartoons\", "
+            + "\"name\": \"Caricatures and cartoons\"}, "
+            + "{\"url\": \"https://openlibrary.org/subjects/zen_buddhism\","
+            + " \"name\": \"Zen Buddhism\"}], \"publish_date\": \"1994\", \"key\":"
+            + " \"/books/OL1397864M\", \"authors\": [{\"url\": \"https://openlibrary.org/authors/OL223368A/Zhizhong_Cai\", "
+            + "\"name\": \"Zhizhong Cai\"}], \"classifications\": {\"dewey_decimal_class\": [\"294.3/927\"],"
+            + " \"lc_classifications\": [\"BQ9265.6 .T7313 1994\"]}, \"publish_places\": [{\"name\": \"New York\"}]}}";
+
 }
