@@ -44,7 +44,7 @@ public class UserRepositoryTest {
         Optional<ArrayList<Users>> found = userRepository
             .findByBirthdateBetweenAndNameContainingIgnoreCase(LocalDate.parse("1990-12-06"),
                 LocalDate.parse("2003-12-06"),
-                "pe");
+                "pe", null);
 
         assertThat(found.get().get(0).getName())
             .isEqualTo(oneTestUser.getName());

@@ -9,6 +9,7 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -176,10 +177,12 @@ public class UserController {
     public ArrayList<Users> findByBirthdateAndName(
         @RequestParam String birthdateFrom,
         @RequestParam String birthdateTo,
-        @RequestParam String name) {
+        @RequestParam String name,
+        Pageable pageable) {
         return userRepository
             .findByBirthdateBetweenAndNameContainingIgnoreCase(LocalDate.parse(birthdateFrom),
-                LocalDate.parse(birthdateTo), name).orElseThrow(UserNotFoundException::new);
+                LocalDate.parse(birthdateTo), name, pageable)
+            .orElseThrow(UserNotFoundException::new);
     }
 
     @GetMapping("/username")

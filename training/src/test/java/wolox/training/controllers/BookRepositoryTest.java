@@ -40,7 +40,7 @@ public class BookRepositoryTest {
 
         Optional<ArrayList<Book>> found = bookRepository
             .findByPublisherAndGenreAndYear(oneTestBook.getPublisher(), oneTestBook.getGenre(),
-                oneTestBook.getYear());
+                oneTestBook.getYear(), null);
 
         assertThat(found.get().get(0).getTitle())
             .isEqualTo(oneTestBook.getTitle());
@@ -61,7 +61,8 @@ public class BookRepositoryTest {
                 oneTestBook.getPublisher(),
                 oneTestBook.getYear(),
                 oneTestBook.getPages(),
-                oneTestBook.getIsbn()
+                oneTestBook.getIsbn(),
+                null
             );
 
         assertThat(found.get().get(0).getTitle())

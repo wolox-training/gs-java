@@ -2,6 +2,7 @@ package wolox.training.repositories;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,7 +16,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     Optional<ArrayList<Book>> findByPublisherAndGenreAndYear(
         @Param("publisher") String publisher,
         @Param("genre") String genre,
-        @Param("year") String year);
+        @Param("year") String year,
+        Pageable pageable);
 
     Book findFirstByAuthor(String author);
 
@@ -38,7 +40,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
         @Param("publisher") String publisher,
         @Param("year") String year,
         @Param("pages") Integer pages,
-        @Param("isbn") String isbn
+        @Param("isbn") String isbn,
+        Pageable pageable
     );
 
     Optional<Book> findFirstByIsbn(String isbn);

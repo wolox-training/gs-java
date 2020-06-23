@@ -3,6 +3,7 @@ package wolox.training.repositories;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,6 +20,7 @@ public interface UserRepository extends JpaRepository<Users, Long> {
     Optional<ArrayList<Users>> findByBirthdateBetweenAndNameContainingIgnoreCase(
         @Param("birthdateFrom") LocalDate birthdateFrom,
         @Param("birthdateTo") LocalDate birthdateTo,
-        @Param("name") String name);
+        @Param("name") String name,
+        Pageable pageable);
 
 }

@@ -3,6 +3,7 @@ package wolox.training.controllers;
 import io.swagger.annotations.Api;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,10 +42,12 @@ public class BookController {
         @RequestParam(value = "publisher", required = false) String publisher,
         @RequestParam(value = "year", required = false) String year,
         @RequestParam(value = "pages", required = false) Integer pages,
-        @RequestParam(value = "isbn", required = false) String isbn
+        @RequestParam(value = "isbn", required = false) String isbn,
+        Pageable pageable
     ) throws BookNotFoundException {
         return bookRepository
-            .getAllByConditions(genre, author, image, title, subtitle, publisher, year, pages, isbn)
+            .getAllByConditions(genre, author, image, title, subtitle, publisher, year, pages, isbn,
+                pageable)
             .orElseThrow(BookNotFoundException::new);
     }
 
@@ -74,10 +77,11 @@ public class BookController {
     public ArrayList<Book> findByPublisherAndGenreAndYear(
         @RequestParam(value = "publisher", required = false) String publisher,
         @RequestParam(value = "genre", required = false) String genre,
-        @RequestParam(value = "year", required = false) String year)
+        @RequestParam(value = "year", required = false) String year,
+        Pageable pageable)
         throws BookNotFoundException {
         return bookRepository
-            .findByPublisherAndGenreAndYear(publisher, genre, year)
+            .findByPublisherAndGenreAndYear(publisher, genre, year, pageable)
             .orElseThrow(BookNotFoundException::new);
 
     }

@@ -11,6 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -22,6 +26,7 @@ import wolox.training.repositories.BookRepository;
 import wolox.training.utils.BuildBook;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -67,14 +72,15 @@ public class BookControllerTest {
         oneTestBookWithOutGenre = new BuildBook().makeABook(2L, null, "J.K rowling", "one Image",
             "Harry potter", "la camara secreta", "publishwer 12345", "1900", 30, "isbn12");
 
-        oneArrayTest = new ArrayList<Book>();
-        oneArrayTest.add(oneTestBook);
-
         oneTestBookWithIsbn = new BuildBook()
-            .makeABook(1L, "Caricatures and cartoons-Zen Buddhism", "Zhizhong Cai",
+            .makeABook(3L, "Caricatures and cartoons-Zen Buddhism", "Zhizhong Cai",
                 "https://covers.openlibrary.org/b/id/240726-S.jpg",
                 "Zen speaks",
                 "shouts of nothingness", "Anchor Books", "1994", 159, "0385472579");
+
+        oneArrayTest = new ArrayList<Book>();
+        oneArrayTest.add(oneTestBook);
+        oneArrayTest.add(oneTestBookWithIsbn);
     }
 
 
@@ -180,9 +186,10 @@ public class BookControllerTest {
     void whenFindByPublisherAndGenreAndYearWithoutParams_thenReturnABook() throws Exception {
         Mockito.when(mockBookRepository
             .findByPublisherAndGenreAndYear(
-                null,
-                null,
-                null))
+                Mockito.any(),
+                Mockito.any(),
+                Mockito.any(),
+                Mockito.any()))
             .thenReturn(java.util.Optional.ofNullable(oneArrayTest));
         String url = ("/api/books/findBook");
         mvc.perform(get(url)
@@ -200,7 +207,8 @@ public class BookControllerTest {
             .findByPublisherAndGenreAndYear(
                 Mockito.anyString(),
                 Mockito.anyString(),
-                Mockito.anyString()))
+                Mockito.anyString(),
+                Mockito.any()))
             .thenReturn(java.util.Optional.ofNullable(oneArrayTest));
 
         String url = ("/api/books/findBook");
@@ -214,6 +222,42 @@ public class BookControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$[0].id", is(1)))
             .andExpect(jsonPath("$[0].title", is(oneTestBook.getTitle())));
+    }
+
+    @WithMockUser(value = "pedro")
+    @Test
+    void whengetAllByConditionsWithPageable_thenReturnsBooks() throws Exception {
+
+        Pageable pageable = PageRequest.of(0, 2, Sort.by(
+            Order.asc("id")));
+        Mockito.when(mockBookRepository.getAllByConditions(
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            pageable
+        )).thenReturn(java.util.Optional.ofNullable(oneArrayTest));
+
+        String url = ("/api/books");
+
+        mvc.perform(get(url)
+            .contentType(MediaType.APPLICATION_JSON)
+            .param("page", "0")
+            .param("size", "2")
+            .param("sort", "id,asc")
+        )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.*", hasSize(2)))
+            .andExpect(jsonPath("$[0].id", is(1)))
+            .andExpect(jsonPath("$[0].title", is(oneTestBook.getTitle())))
+            .andExpect(jsonPath("$[1].id", is(3)))
+            .andExpect(jsonPath("$[1].title", is(oneTestBookWithIsbn.getTitle())));
+
     }
 
     @WithMockUser(value = "pedro")
