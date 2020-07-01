@@ -19,12 +19,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import lombok.Data;
 
 @Entity
 @ApiModel(description = "Users from the OpenLibraryApi")
 @JsonIdentityInfo(
     generator = ObjectIdGenerators.PropertyGenerator.class,
     property = "id")
+@Data
 public class Users {
 
     @Id
@@ -61,17 +63,6 @@ public class Users {
         this.password = password;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getUsername() {
-        return username;
-    }
 
     public void setUsername(String username) {
         String message = "the username of user must not be null";
@@ -79,18 +70,10 @@ public class Users {
         this.username = username;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public void setName(String name) {
         String message = "the name of user must not be null";
         Preconditions.checkNotNull(name, message);
         this.name = name;
-    }
-
-    public LocalDate getBirthdate() {
-        return birthdate;
     }
 
     public void setBirthdate(LocalDate birthdate) {
@@ -105,18 +88,6 @@ public class Users {
         return (List<Book>) Collections.unmodifiableList(books);
     }
 
-    public void setBooks(List<Book> books) {
-        this.books = books;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    // this method is used in tests
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public void addBook(Book book) {
         this.books.add(book);

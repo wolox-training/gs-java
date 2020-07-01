@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import lombok.Data;
 import wolox.training.models.DTO.BookDTO;
 
 
@@ -23,6 +24,7 @@ import wolox.training.models.DTO.BookDTO;
 @JsonIdentityInfo(
     generator = ObjectIdGenerators.PropertyGenerator.class,
     property = "id")
+@Data
 public class Book {
 
     @Id
@@ -97,27 +99,10 @@ public class Book {
         this.setYear(dtoLibraryService.getYear());
     }
 
-    public long getId() {
-        return id;
-    }
-
-    // this method is used in tests
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getGenre() {
-        return genre;
-    }
-
     public void setGenre(String genre) {
         String message = "the genre of book must not be null";
         Preconditions.checkNotNull(genre, message);
         this.genre = genre;
-    }
-
-    public String getAuthor() {
-        return author;
     }
 
     public void setAuthor(String author) {
@@ -126,18 +111,10 @@ public class Book {
         this.author = author;
     }
 
-    public String getImage() {
-        return image;
-    }
-
     public void setImage(String image) {
         String message = "the image of book must not be null";
         Preconditions.checkNotNull(image, message);
         this.image = image;
-    }
-
-    public String getTitle() {
-        return title;
     }
 
     public void setTitle(String title) {
@@ -156,26 +133,6 @@ public class Book {
         this.subtitle = subtitle;
     }
 
-    public String getPublisher() {
-        return publisher;
-    }
-
-    public void setPublisher(String publisher) {
-        this.publisher = publisher;
-    }
-
-    public String getYear() {
-        return year;
-    }
-
-    public void setYear(String year) {
-        this.year = year;
-    }
-
-    public Integer getPages() {
-        return pages;
-    }
-
     public void setPages(Integer pages) {
         String messagCheckNotNull = "the pages of book must not be null";
         String messagCheckArgument = "the pages of book must be greater than 0";
@@ -184,20 +141,9 @@ public class Book {
         this.pages = pages;
     }
 
-    public String getIsbn() {
-        return isbn;
-    }
-
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
-    }
 
     public List<Users> getUsers() {
         return (List<Users>) Collections.unmodifiableList(users);
-    }
-
-    public void setUsers(List<Users> users) {
-        this.users = users;
     }
 
     public void addUser(Users user) {

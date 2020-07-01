@@ -5,16 +5,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 @Data
 public class BookDTO {
 
-    @Getter
-    @Setter
     private String genre;
     private String authors;
     private String Image;
