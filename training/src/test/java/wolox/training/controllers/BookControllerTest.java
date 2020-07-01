@@ -2,7 +2,10 @@ package wolox.training.controllers;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import java.util.ArrayList;
+import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -25,6 +29,9 @@ import wolox.training.models.Book;
 import wolox.training.repositories.BookRepository;
 import wolox.training.utils.BuildBook;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -37,11 +44,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static wolox.training.utils.Utils.BODY_WITH_BOOK_CREATED;
 import static wolox.training.utils.Utils.BODY_WITH_BOOK_UPDATED;
+import static wolox.training.utils.Utils.RESPONSE_ISBN_BOOK;
+import static wolox.training.utils.Utils.RESQUEST_BAD_ISBN_BOOK;
+import static wolox.training.utils.Utils.RESQUEST_ISBN_BOOK;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class BookControllerTest {
 
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule();
     ArrayList<Book> oneArrayTest;
     @Autowired
     private WebApplicationContext context;
@@ -266,6 +278,13 @@ public class BookControllerTest {
         Mockito.when(mockBookRepository.findFirstByIsbn("0385472"))
             .thenReturn(java.util.Optional.ofNullable(null));
 
+        stubFor(WireMock.get(urlEqualTo(
+            RESQUEST_BAD_ISBN_BOOK))
+            .willReturn(aResponse()
+                .withStatus(HttpStatus.OK.value())
+                .withHeader("Content-Type", "application/json")
+                .withBody("{}")));
+
         String url = ("/api/books/isbn/0385472");
         mvc.perform(get(url)
             .contentType(MediaType.APPLICATION_JSON))
@@ -281,6 +300,13 @@ public class BookControllerTest {
 
         Mockito.when(mockBookRepository.save(Mockito.any()))
             .thenReturn(oneTestBookWithIsbn);
+
+        stubFor(WireMock.get(urlEqualTo(
+            RESQUEST_ISBN_BOOK))
+            .willReturn(aResponse()
+                .withStatus(HttpStatus.OK.value())
+                .withHeader("Content-Type", "application/json")
+                .withBody(RESPONSE_ISBN_BOOK)));
 
         String url = ("/api/books/isbn/0385472579");
         mvc.perform(get(url)
